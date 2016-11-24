@@ -20,17 +20,14 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\OAuth2;
+namespace Rampage\Nexus\Master\OAuth2;
 
 use Rampage\Nexus\Config\PropertyConfigInterface;
 
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use League\OAuth2\Server\Repositories\UserRepositoryInterface as OAuthUserRepoInterface;
 
 return [
     'dependencies' => [
@@ -41,12 +38,8 @@ return [
     ],
     'di' => [
         'preferences' => [
-            AccessTokenRepositoryInterface::class => ODM\Repository\AccessTokenRepository::class,
-            RefreshTokenRepositoryInterface::class => ODM\Repository\RefreshTokenRepository::class,
             ClientRepositoryInterface::class => Repository\UIClientRepository::class,
             ScopeRepositoryInterface::class => Repository\ScopeRepository::class,
-            Repository\UserRepositoryInterface::class => ODM\Repository\UserRepository::class,
-            OAuthUserRepoInterface::class => ODM\Repository\UserRepository::class
         ],
         'instances' => [
             Repository\UIClientRepository::class => [

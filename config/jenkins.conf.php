@@ -1,4 +1,5 @@
 <?php
+// FIXME: Move to Jenkins module
 /**
  * Copyright (c) 2016 Axel Helmert
  *
@@ -20,7 +21,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus;
+namespace Rampage\Nexus\Master;
 
 return [
     'dependencies' => [

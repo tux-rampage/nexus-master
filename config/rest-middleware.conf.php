@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus;
+namespace Rampage\Nexus\Master;
 
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use Zend\Expressive\Container\ApplicationFactory;

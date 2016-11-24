@@ -20,9 +20,11 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus;
+namespace Rampage\Nexus\Master;
+
+use Rampage\Nexus\ServiceFactory\RuntimeConfigFactory;
 
 return [
-    ServiceFactory\RuntimeConfigFactory::KEY => [
+    RuntimeConfigFactory::KEY => [
     ]
 ];
