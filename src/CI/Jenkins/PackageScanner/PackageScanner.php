@@ -20,28 +20,30 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\PackageScanner;
+namespace Rampage\Nexus\Master\CI\Jenkins\PackageScanner;
 
-use Rampage\Nexus\BuildSystem\Jenkins\BuildNotification;
-use Rampage\Nexus\BuildSystem\Jenkins\Repository\StateRepositoryInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\Job;
-use Rampage\Nexus\BuildSystem\Jenkins\ClientInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\Build;
-use Rampage\Nexus\BuildSystem\Jenkins\Artifact;
-use Rampage\Nexus\BuildSystem\Jenkins\ClientFactoryInterface;
+use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\Repository\StateRepositoryInterface;
+use Rampage\Nexus\Master\CI\Jenkins\Job;
+use Rampage\Nexus\Master\CI\Jenkins\ClientInterface;
+use Rampage\Nexus\Master\CI\Jenkins\Build;
+use Rampage\Nexus\Master\CI\Jenkins\Artifact;
+use Rampage\Nexus\Master\CI\Jenkins\ClientFactoryInterface;
+
+use Rampage\Nexus\Master\CI\Jenkins\Entities\InstanceConfig;
 
 use Rampage\Nexus\Package\ZpkPackage;
 use Rampage\Nexus\Package\ComposerPackage;
 use Rampage\Nexus\Package\PackageInterface;
 
 use Rampage\Nexus\Archive\ArchiveLoaderInterface;
+use Rampage\Nexus\Entities\ApplicationPackage;
 use Rampage\Nexus\NoopLogger;
 use Rampage\Nexus\Repository\PackageRepositoryInterface;
-use Rampage\Nexus\Entities\ApplicationPackage;
+use Rampage\Nexus\FileSystemInterface;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Rampage\Nexus\FileSystemInterface;
 
 
 /**
@@ -290,7 +292,7 @@ class PackageScanner implements PackageScannerInterface, LoggerAwareInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\PackageScannerInterface::notify()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\PackageScanner\PackageScannerInterface::notify()
      */
     public function notify(InstanceConfig $instance, BuildNotification $notification)
     {
@@ -377,7 +379,7 @@ class PackageScanner implements PackageScannerInterface, LoggerAwareInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\PackageScannerInterface::scan()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\PackageScanner\PackageScannerInterface::scan()
      */
     public function scan(InstanceConfig $instance)
     {

@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 /**
  * Jenkins client factory

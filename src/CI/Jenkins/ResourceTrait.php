@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 use Rampage\Nexus\Config\ArrayConfig;
 use ArrayObject;
@@ -73,7 +73,7 @@ trait ResourceTrait
      * Returns the api client
      *
      * @throws LogicException
-     * @return \Rampage\Nexus\BuildSystem\Jenkins\ClientInterface
+     * @return \Rampage\Nexus\Master\CI\Jenkins\ClientInterface
      */
     protected function getApi()
     {

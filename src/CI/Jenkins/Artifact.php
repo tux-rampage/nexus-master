@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -46,7 +46,7 @@ class Artifact
     /**
      * The related build
      *
-     * @return \Rampage\Nexus\BuildSystem\Jenkins\Build
+     * @return \Rampage\Nexus\Master\CI\Jenkins\Build
      */
     public function getBuild()
     {

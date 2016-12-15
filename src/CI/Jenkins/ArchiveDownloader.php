@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 use Rampage\Nexus\Archive\DownloaderInterface;
 use Rampage\Nexus\Exception\InvalidArgumentException;
@@ -97,6 +97,8 @@ class ArchiveDownloader implements DownloaderInterface
             $response = $client->downloadArtifact($artifact, $targetFile);
 
             return ($response->getStatusCode() == 200);
+        } catch (\Exception $e) {
+            return false;
         } catch (\Throwable $e) {
             return false;
         }

@@ -20,12 +20,12 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\MongoDB;
+namespace Rampage\Nexus\Master\CI\Jenkins\MongoDB;
 
-use Rampage\Nexus\BuildSystem\Jenkins\Repository\StateRepositoryInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\InstanceConfig;
-use Rampage\Nexus\BuildSystem\Jenkins\Build;
-use Rampage\Nexus\BuildSystem\Jenkins\Job;
+use Rampage\Nexus\Master\CI\Jenkins\Repository\StateRepositoryInterface;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\Build;
+use Rampage\Nexus\Master\CI\Jenkins\Job;
 
 use Rampage\Nexus\MongoDB\Driver\DriverInterface;
 use Rampage\Nexus\MongoDB\Driver\CollectionInterface;
@@ -65,7 +65,7 @@ final class StateRepository implements StateRepositoryInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\Repository\StateRepositoryInterface::addProcessedBuild()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\Repository\StateRepositoryInterface::addProcessedBuild()
      */
     public function addProcessedBuild(InstanceConfig $config, Build $build)
     {
@@ -79,7 +79,7 @@ final class StateRepository implements StateRepositoryInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\Repository\StateRepositoryInterface::getProcessedBuilds()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\Repository\StateRepositoryInterface::getProcessedBuilds()
      */
     public function getProcessedBuilds(InstanceConfig $config, Job $job)
     {

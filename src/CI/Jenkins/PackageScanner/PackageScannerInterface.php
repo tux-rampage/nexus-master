@@ -20,34 +20,25 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\ServiceFactory;
+namespace Rampage\Nexus\Master\CI\Jenkins\PackageScanner;
 
-use Rampage\Nexus\Archive\ArchiveLoaderInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\ArchiveDownloader;
+use Rampage\Nexus\Master\CI\Jenkins\Entities\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
 
-use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\DelegatorFactoryInterface;
-
-
-/**
- * Service delegator for the archive loader
- */
-class ArchiveLoaderDelegator implements DelegatorFactoryInterface
+interface PackageScannerInterface
 {
     /**
-     * {@inheritDoc}
-     * @see \Zend\ServiceManager\Factory\DelegatorFactoryInterface::__invoke()
+     * Perform a repository scan
+     *
+     * @param InstanceConfig $instance
      */
-    public function __invoke(ContainerInterface $container, $name, callable $callback, array $options = null)
-    {
-        $loader = $callback();
+    public function scan(InstanceConfig $instance);
 
-        if ($loader instanceof ArchiveLoaderInterface) {
-            $loader->addDownloader($container->get(ArchiveDownloader::class));
-        }
-
-        return $loader;
-    }
-
-
+    /**
+     * Notify about a build
+     *
+     * @param InstanceConfig $instance
+     * @param BuildNotification $notification
+     */
+    public function notify(InstanceConfig $instance, BuildNotification $notification);
 }

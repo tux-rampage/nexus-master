@@ -20,15 +20,19 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\Console;
+namespace Rampage\Nexus\Master\CI\Jenkins\Console;
+
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\PackageScannerInterface;
+use Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface;
+
+use Rampage\Nexus\ConsoleLogger;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\PackageScannerInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface;
+
 use Psr\Log\LoggerAwareInterface;
-use Rampage\Nexus\ConsoleLogger;
+
 
 /**
  * Implementation of the scan command

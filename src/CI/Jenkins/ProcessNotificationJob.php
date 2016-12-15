@@ -20,14 +20,14 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 use Rampage\Nexus\Job\JobInterface;
 use Rampage\Nexus\Job\ContainerAwareInterface;
 use Rampage\Nexus\Job\ContainerAwareTrait;
 
-use Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\PackageScannerInterface;
+use Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\PackageScannerInterface;
 use Rampage\Nexus\Exception\UnexpectedValueException;
 use Rampage\Nexus\Exception\LogicException;
 

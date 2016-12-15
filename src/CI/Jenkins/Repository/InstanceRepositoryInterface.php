@@ -20,24 +20,31 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\PackageScanner;
+namespace Rampage\Nexus\Master\CI\Jenkins\Repository;
 
-use Rampage\Nexus\BuildSystem\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
 
-interface PackageScannerInterface
+interface InstanceRepositoryInterface
 {
     /**
-     * Perform a repository scan
-     *
-     * @param InstanceConfig $instance
+     * @return InstanceConfig
      */
-    public function scan(InstanceConfig $instance);
+    public function findAll();
 
     /**
-     * Notify about a build
+     * Find an instance config by key
      *
-     * @param InstanceConfig $instance
-     * @param BuildNotification $notification
+     * @param string $key
+     * @return InstanceConfig
      */
-    public function notify(InstanceConfig $instance, BuildNotification $notification);
+    public function find($key);
+
+    /**
+     * Find instances for a build notification
+     *
+     * @param BuildNotification $notification
+     * @return InstanceConfig[]
+     */
+    public function findByBuildNotification(BuildNotification $notification);
 }

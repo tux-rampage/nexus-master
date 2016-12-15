@@ -20,31 +20,31 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\Repository;
+namespace Rampage\Nexus\Master\CI\Jenkins\Repository;
 
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\InstanceConfig;
-use Rampage\Nexus\BuildSystem\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\Job;
+use Rampage\Nexus\Master\CI\Jenkins\Build;
 
-interface InstanceRepositoryInterface
+/**
+ * Defines the state repository for jenkins scanners
+ */
+interface StateRepositoryInterface
 {
     /**
-     * @return InstanceConfig
+     * Returns all processed builds for the given job and instance
+     *
+     * @param InstanceConfig $config
+     * @param Job $job
+     * @return int[]
      */
-    public function findAll();
+    public function getProcessedBuilds(InstanceConfig $config, Job $job);
 
     /**
-     * Find an instance config by key
+     * Add a build as processed
      *
-     * @param string $key
-     * @return InstanceConfig
+     * @param InstanceConfig $config
+     * @param Build $build
      */
-    public function find($key);
-
-    /**
-     * Find instances for a build notification
-     *
-     * @param BuildNotification $notification
-     * @return InstanceConfig[]
-     */
-    public function findByBuildNotification(BuildNotification $notification);
+    public function addProcessedBuild(InstanceConfig $config, Build $build);
 }

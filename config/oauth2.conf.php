@@ -34,13 +34,13 @@ return [
         'factories' => [
             ResourceServer::class => ServiceFactory\ResourceServerFactory::class,
             AuthorizationServer::class => ServiceFactory\AuthorizationServerFactory::class,
-        ]
-    ],
-    'di' => [
-        'preferences' => [
+        ],
+        'aliases' => [
             ClientRepositoryInterface::class => Repository\UIClientRepository::class,
             ScopeRepositoryInterface::class => Repository\ScopeRepository::class,
         ],
+    ],
+    'di' => [
         'instances' => [
             Repository\UIClientRepository::class => [
                 'preferences' => [

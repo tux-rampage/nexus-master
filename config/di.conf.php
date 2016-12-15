@@ -20,9 +20,13 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus;
+namespace Rampage\Nexus\Master;
+
+use Rampage\Nexus\Api\RestClient;
+use Rampage\Nexus\Deployment\NodeStrategyProviderInterface;
 
 use GuzzleHttp\ClientInterface as HttpClientInterface;
+
 use Zend\Crypt\Password\PasswordInterface;
 use Zend\Crypt\Password\Bcrypt as BcryptPasswordStrategy;
 
@@ -31,12 +35,12 @@ return [
     'di' => [
         'preferences' => [
             PasswordInterface::class => BcryptPasswordStrategy::class,
-            Deployment\NodeStrategyProviderInterface::class => Deployment\NodeStrategyProvider::class,
+            NodeStrategyProviderInterface::class => Deployment\NodeStrategyProvider::class,
         ],
         'instances' => [
             Deployment\NodeStrategy\Rampage::class => [
                 'preferences' => [
-                    HttpClientInterface::class => Api\RestClient::class,
+                    HttpClientInterface::class => RestClient::class,
                 ]
             ],
         ]

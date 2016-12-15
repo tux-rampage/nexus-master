@@ -20,14 +20,22 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\PackageScanner;
+namespace Rampage\Nexus\Master\CI\Jenkins\Entities;
 
+/**
+ * Instance configuration
+ */
 class InstanceConfig
 {
     /**
      * @var string
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $label;
 
     /**
      * @var string
@@ -45,16 +53,10 @@ class InstanceConfig
     protected $includeProjects = [];
 
     /**
-     * @var string[]
-     */
-    protected $excludeProjects = [];
-
-    /**
      * @param string $jenkinsUrl
      */
-    public function __construct($id, $jenkinsUrl)
+    public function __construct($jenkinsUrl)
     {
-        $this->id = $id;
         $this->jenkinsUrl = $jenkinsUrl;
     }
 
@@ -75,6 +77,16 @@ class InstanceConfig
     }
 
     /**
+     * @param string $jenkinsUrl
+     * @return self
+     */
+    public function setJenkinsUrl($jenkinsUrl)
+    {
+        $this->jenkinsUrl = (string)$jenkinsUrl;
+        return $this;
+    }
+
+    /**
      * Included project names
      *
      * @return string[]
@@ -85,22 +97,40 @@ class InstanceConfig
     }
 
     /**
-     * Excluded project names
-     *
-     * @return string[]
+     * @return string
      */
-    public function getExcludeProjects()
+    public function getLabel()
     {
-        return $this->excludeProjects;
+        return $this->label;
     }
 
     /**
-     * @param bool $flag
+     * @param string $label
      * @return self
      */
-    public function enableArtifactScan($flag = true)
+    public function setLabel($label)
     {
-        $this->scanArtifactFiles = (bool)$flag;
+        $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * @param boolean $scanArtifactFiles
+     * @return self
+     */
+    public function setScanArtifactFiles($scanArtifactFiles)
+    {
+        $this->scanArtifactFiles = $scanArtifactFiles;
+        return $this;
+    }
+
+    /**
+     * @param multitype:\Rampage\Nexus\Master\CI\Jenkins\Entities\string  $includeProjects
+     * @return self
+     */
+    public function setIncludeProjects($includeProjects)
+    {
+        $this->includeProjects = $includeProjects;
         return $this;
     }
 
@@ -121,16 +151,6 @@ class InstanceConfig
     public function includeProject($name)
     {
         $this->includeProjects[] = (string)$name;
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function excludeProject($name)
-    {
-        $this->excludeProjects[] = (string)$name;
         return $this;
     }
 }

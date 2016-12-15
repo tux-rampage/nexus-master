@@ -20,18 +20,19 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\Action;
+namespace Rampage\Nexus\Master\CI\Jenkins\Action;
 
-use Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\PackageScannerInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\PackageScannerInterface;
+use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\ProcessNotificationJob;
+
+use Rampage\Nexus\Job\QueueInterface;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 use Zend\Stratigility\MiddlewareInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\ProcessNotificationJob;
-use Rampage\Nexus\Job\QueueInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
 

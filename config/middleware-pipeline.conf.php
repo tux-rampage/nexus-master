@@ -21,9 +21,9 @@
  */
 
 
-namespace Rampage\Nexus;
+namespace Rampage\Nexus\Master;
 
-use Rampage\Nexus\ServiceFactory\Middleware\RestMiddlewareFactory;
+use Rampage\Nexus\Master\ServiceFactory\Middleware\RestMiddlewareFactory;
 
 return [
     'dependencies' => [

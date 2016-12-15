@@ -23,32 +23,36 @@
 
 namespace Rampage\Nexus\Master;
 
+use Rampage\Nexus\Config\PropertyConfigInterface;
+use Rampage\Nexus\Archive\ArchiveLoader;
+
+
 return [
     'dependencies' => [
         'delegators' => [
-            Archive\ArchiveLoader::class => [
-                'jenkins' => BuildSystem\Jenkins\ServiceFactory\ArchiveLoaderDelegator::class,
+            ArchiveLoader::class => [
+                'jenkins' => CI\Jenkins\ServiceFactory\ArchiveLoaderDelegator::class,
             ]
         ]
     ],
     'di' => [
         'preferences' => [
-            BuildSystem\Jenkins\ClientFactoryInterface::class => BuildSystem\Jenkins\ClientFactory::class,
-            BuildSystem\Jenkins\Repository\InstanceRepositoryInterface::class => BuildSystem\Jenkins\Repository\ConfiguredInstancesRepository::class,
-            BuildSystem\Jenkins\Repository\StateRepositoryInterface::class => BuildSystem\Jenkins\MongoDB\StateRepository::class,
-            BuildSystem\Jenkins\PackageScanner\PackageScannerInterface::class => BuildSystem\Jenkins\PackageScanner\PackageScanner::class,
+            CI\Jenkins\ClientFactoryInterface::class => CI\Jenkins\ClientFactory::class,
+            CI\Jenkins\Repository\InstanceRepositoryInterface::class => CI\Jenkins\Repository\ConfiguredInstancesRepository::class,
+            CI\Jenkins\Repository\StateRepositoryInterface::class => CI\Jenkins\MongoDB\StateRepository::class,
+            CI\Jenkins\PackageScanner\PackageScannerInterface::class => CI\Jenkins\PackageScanner\PackageScanner::class,
         ],
 
         'instances' => [
-            BuildSystem\Jenkins\Repository\ConfiguredInstancesRepository::class => [
+            CI\Jenkins\Repository\ConfiguredInstancesRepository::class => [
                 'preferences' => [
-                    Config\PropertyConfigInterface::class => 'RuntimeConfig',
+                    PropertyConfigInterface::class => 'RuntimeConfig',
                 ]
             ]
         ]
     ],
 
     'commands' => [
-        'jenkins:scan' => BuildSystem\Jenkins\Console\ScanCommand::class,
+        'jenkins:scan' => CI\Jenkins\Console\ScanCommand::class,
     ],
 ];

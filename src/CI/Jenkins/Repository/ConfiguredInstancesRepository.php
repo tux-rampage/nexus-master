@@ -20,11 +20,11 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins\Repository;
+namespace Rampage\Nexus\Master\CI\Jenkins\Repository;
 
 use Rampage\Nexus\Config\PropertyConfigInterface;
-use Rampage\Nexus\BuildSystem\Jenkins\PackageScanner\InstanceConfig;
-use Rampage\Nexus\BuildSystem\Jenkins\BuildNotification;
+use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
 
 /**
  * Implements the instance repository from runtime config
@@ -103,7 +103,7 @@ final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface::find()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface::find()
      */
     public function find($key)
     {
@@ -116,7 +116,7 @@ final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface::findAll()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface::findAll()
      */
     public function findAll()
     {
@@ -125,7 +125,7 @@ final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\Repository\InstanceRepositoryInterface::findByBuildNotification()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\Repository\InstanceRepositoryInterface::findByBuildNotification()
      */
     public function findByBuildNotification(BuildNotification $notification)
     {

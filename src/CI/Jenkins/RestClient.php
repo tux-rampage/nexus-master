@@ -20,7 +20,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\BuildSystem\Jenkins;
+namespace Rampage\Nexus\Master\CI\Jenkins;
 
 use Rampage\Nexus\Exception\RuntimeException;
 use Rampage\Nexus\Exception\UnexpectedValueException;
@@ -112,7 +112,7 @@ class RestClient implements ClientInterface
 
     /**
      * {@inheritDoc}
-     * @see \Rampage\Nexus\BuildSystem\Jenkins\ClientInterface::getJobs()
+     * @see \Rampage\Nexus\Master\CI\Jenkins\ClientInterface::getJobs()
      */
     public function getJobs()
     {
