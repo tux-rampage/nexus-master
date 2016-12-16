@@ -44,6 +44,7 @@ use Rampage\Nexus\FileSystemInterface;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Rampage\Nexus\Master\CI\Jenkins\Entities\JobConfig;
 
 
 /**
@@ -105,6 +106,14 @@ class PackageScanner implements PackageScannerInterface, LoggerAwareInterface
     private function jobNameMatches($name, $patters)
     {
         foreach ($patters as $item) {
+            if ($item instanceof JobConfig) {
+                if ($name == $item->getName()) {
+                    return true;
+                }
+
+                continue;
+            }
+
             $item = $this->normalizeJobPattern($item);
             if (($item == $name) || (strpos($name, $item . '/') === 0)) {
                 return true;
@@ -124,11 +133,11 @@ class PackageScanner implements PackageScannerInterface, LoggerAwareInterface
     {
         $name = ($job instanceof Job)? $job->getFullName() : (string)$job;
 
-        if ($this->jobNameMatches($name, $instance->getExcludeProjects())) {
+        if ($this->jobNameMatches($name, $instance->getExcludedJobs())) {
             return false;
         }
 
-        $includes = $instance->getIncludeProjects();
+        $includes = $instance->getIncludedJobs();
         $accepted = !count($includes);
 
         if ($this->jobNameMatches($name, $includes)) {

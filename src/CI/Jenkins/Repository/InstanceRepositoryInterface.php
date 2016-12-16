@@ -22,9 +22,12 @@
 
 namespace Rampage\Nexus\Master\CI\Jenkins\Repository;
 
-use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\Entities\InstanceConfig;
 use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
 
+/**
+ * Repository for instances
+ */
 interface InstanceRepositoryInterface
 {
     /**

@@ -76,7 +76,7 @@ trait JsonCollectionTrait
         foreach ($collection as $item) {
             $item = $this->exportCollectionItemToArray($item);
 
-            if (!is_array($item) && !($item instanceof ArrayObject)) {
+            if (!is_array($item) && !($item instanceof ArrayObject) && !($item instanceof \JsonSerializable)) {
                 throw new UnexpectedValueException(sprintf('Expected collection item to be an array or array representative. Got %s', is_object($item)? get_class($item) : gettype($item)));
             }
 

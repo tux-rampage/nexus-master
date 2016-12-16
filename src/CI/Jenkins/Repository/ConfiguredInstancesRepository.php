@@ -23,7 +23,7 @@
 namespace Rampage\Nexus\Master\CI\Jenkins\Repository;
 
 use Rampage\Nexus\Config\PropertyConfigInterface;
-use Rampage\Nexus\Master\CI\Jenkins\PackageScanner\InstanceConfig;
+use Rampage\Nexus\Master\CI\Jenkins\Entities\InstanceConfig;
 use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
 
 /**
@@ -31,6 +31,11 @@ use Rampage\Nexus\Master\CI\Jenkins\BuildNotification;
  */
 final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
 {
+    /**
+     * @var \ReflectionProperty
+     */
+    private static $idPropertyReflection;
+
     /**
      * @var PropertyConfigInterface
      */
@@ -62,6 +67,20 @@ final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
     }
 
     /**
+     * @param InstanceConfig $instance
+     * @param string $id
+     */
+    private function injectInstanceId(InstanceConfig $instance, $id)
+    {
+        if (!self::$idPropertyReflection) {
+            self::$idPropertyReflection = (new \ReflectionClass(InstanceConfig::class))->getProperty('id');
+            self::$idPropertyReflection->setAccessible(true);
+        }
+
+        self::$idPropertyReflection->setValue($instance, $id);
+    }
+
+    /**
      * Builds the instance configs
      */
     private function buildInstances()
@@ -78,24 +97,21 @@ final class ConfiguredInstancesRepository implements InstanceRepositoryInterface
             }
 
             $key = (string)$key;
-            $config = new InstanceConfig($key, $data['url']);
+            $config = new InstanceConfig($data['url']);
             $this->instances[$key] = $config;
+            $this->injectInstanceId($config, $key);
 
             if (isset($data['scanArtifactFiles'])) {
-                $config->enableArtifactScan($data['scanArtifactFiles']);
+                $config->setScanArtifactFiles($data['scanArtifactFiles']);
             }
 
             foreach (['include', 'exclude'] as $type) {
-                $method = $type . 'Project';
+                if (!isset($data[$type]) || !$this->isTraversable($data[$type])) {
+                    continue;
+                }
 
-                if (isset($data[$type]) && $this->isTraversable($data[$type])) {
-                    foreach ($data[$type] as $name) {
-                        if (!is_string($name)) {
-                            continue;
-                        }
-
-                        $config->$method($name);
-                    }
+                foreach ($data[$type] as $name) {
+                    $config->ensureJobConfig($name)->setExclude($type == 'exclude');
                 }
             }
         }

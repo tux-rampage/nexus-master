@@ -22,6 +22,10 @@
 
 namespace Rampage\Nexus\Master\CI\Jenkins\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Rampage\Nexus\Exception\InvalidArgumentException;
+
+
 /**
  * Instance configuration
  */
@@ -48,9 +52,9 @@ class InstanceConfig
     private $scanArtifactFiles = false;
 
     /**
-     * @var string[]
+     * @var ArrayCollection|JobConfig[]
      */
-    protected $includeProjects = [];
+    protected $jobs = [];
 
     /**
      * @param string $jenkinsUrl
@@ -87,16 +91,6 @@ class InstanceConfig
     }
 
     /**
-     * Included project names
-     *
-     * @return string[]
-     */
-    public function getIncludeProjects()
-    {
-        return $this->includeProjects;
-    }
-
-    /**
      * @return string
      */
     public function getLabel()
@@ -125,16 +119,6 @@ class InstanceConfig
     }
 
     /**
-     * @param multitype:\Rampage\Nexus\Master\CI\Jenkins\Entities\string  $includeProjects
-     * @return self
-     */
-    public function setIncludeProjects($includeProjects)
-    {
-        $this->includeProjects = $includeProjects;
-        return $this;
-    }
-
-    /**
      * Checks if artifacts should be downloaded and scanned
      *
      * @return bool
@@ -146,11 +130,102 @@ class InstanceConfig
 
     /**
      * @param string $name
-     * @return self
+     * @return \Closure
      */
-    public function includeProject($name)
+    private function getJobNamePredicate($name)
     {
-        $this->includeProjects[] = (string)$name;
+        return function(JobConfig $job) use ($name) {
+            return ($job->getName() == $name);
+        };
+    }
+
+    /**
+     * @param string $name
+     * @return JobConfig|null
+     */
+    public function getJobConfig($name)
+    {
+        return $this->jobs->filter($this->getJobNamePredicate($name))->first();
+    }
+
+    /**
+     * @param string $name
+     * @return boolean
+     */
+    public function hasJob($name)
+    {
+        return $this->jobs->exists($this->getJobNamePredicate($name));
+    }
+
+    /**
+     * Add a job config
+     *
+     * @param JobConfig $job
+     */
+    public function addJobConfig(JobConfig $job)
+    {
+        if ($this->hasJob($job->getName())) {
+            throw new InvalidArgumentException(sprintf(
+                'Duplicate job config for %s in instance %s',
+                $job->getName(), $this->getLabel()
+            ));
+        }
+
+        $this->jobs->add($job);
         return $this;
+    }
+
+    /**
+     * Ensures the existence of a job config
+     *
+     * @param string $name
+     * @return JobConfig
+     */
+    public function ensureJobConfig($name)
+    {
+        if ($this->hasJob($name)) {
+            return $this->getJobConfig($name);
+        }
+
+        $job = new JobConfig($name);
+        $this->addJobConfig($job);
+
+        return $job;
+    }
+
+    /**
+     * @return JobConfig[]
+     */
+    public function getAllJobs()
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * @param bool $excludedFlag
+     * @return \Closure
+     */
+    private function getIncludeExcludePredicate($excludedFlag)
+    {
+        $excludedFlag = (bool)$excludedFlag;
+        return function(JobConfig $item) use ($excludedFlag) {
+            return ($item->isExcluded() == $excludedFlag);
+        };
+    }
+
+    /**
+     * @return JobConfig[]
+     */
+    public function getIncludedJobs()
+    {
+        return $this->jobs->filter($this->getIncludeExcludePredicate(false));
+    }
+
+    /**
+     * @return JobConfig[]
+     */
+    public function getExcludedJobs()
+    {
+        return $this->jobs->filter($this->getIncludeExcludePredicate(true));
     }
 }

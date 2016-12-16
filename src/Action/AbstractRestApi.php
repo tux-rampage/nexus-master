@@ -45,7 +45,7 @@ use ArrayObject;
 /**
  * Implements a repository based rest API
  */
-abstract class AbstractRestApi implements MiddlewareInterface
+abstract class AbstractRestAction implements MiddlewareInterface
 {
     use JsonCollectionTrait;
 
@@ -53,11 +53,6 @@ abstract class AbstractRestApi implements MiddlewareInterface
      * @var RepositoryInterface|PrototypeProviderInterface
      */
     protected $repository;
-
-    /**
-     * @var ArrayExchangeInterface
-     */
-    protected $prototype;
 
     /**
      * @var ResponseInterface
@@ -80,10 +75,9 @@ abstract class AbstractRestApi implements MiddlewareInterface
      * @param RepositoryInterface $repository
      * @param object $prototype
      */
-    public function __construct(RepositoryInterface $repository, ArrayExchangeInterface $prototype = null)
+    public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
-        $this->prototype = $prototype;
     }
 
     /**
@@ -249,7 +243,7 @@ abstract class AbstractRestApi implements MiddlewareInterface
      */
     public function deleteList()
     {
-        throw new BadRequestException(BadRequestException::NOT_ALLOWED);
+        throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
     }
 
     /**
@@ -287,6 +281,26 @@ abstract class AbstractRestApi implements MiddlewareInterface
     }
 
     /**
+     * Check if deletion is possible
+     *
+     * @return
+     */
+    private function canDelete()
+    {
+        return (method_exists($this->repository, 'remove'));
+    }
+
+    /**
+     * Check if saving an entity is possible
+     *
+     * @return bool
+     */
+    private function canSave()
+    {
+        return !method_exists($this->repository, 'save');
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
      */
@@ -309,6 +323,14 @@ abstract class AbstractRestApi implements MiddlewareInterface
                 }
                 break;
 
+            // POST/PUT preconditions
+            case 'put': // Break intentionally omitted
+            case 'post':
+                if (!$this->canSave()) {
+                    throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
+                }
+                // Break intentionally omitted
+
             case 'put':
                 $id = $request->getAttribute($this->identifierAttribute);
                 $data = $this->ensureParsedBody($request);
@@ -321,6 +343,10 @@ abstract class AbstractRestApi implements MiddlewareInterface
                 break;
 
             case 'delete':
+                if (!$this->canDelete()) {
+                    throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
+                }
+
                 $id = $request->getAttribute($this->identifierAttribute);
 
                 if ($id) {
