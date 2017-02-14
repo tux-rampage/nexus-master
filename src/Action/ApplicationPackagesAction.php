@@ -27,22 +27,46 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Stratigility\MiddlewareInterface;
 use Zend\Diactoros\Response\JsonResponse;
+use Rampage\Nexus\Repository\PackageRepositoryInterface;
 
-class ApplicationPackagesAction implements MiddlewareInterface
+class ApplicationPackagesAction extends AbstractRestAction
 {
-    use JsonCollectionTrait;
-
     /**
-     * @var ApplicationRepositoryInterface
+     * @param PackageRepositoryInterface $repository
      */
-    private $repository;
-
-    /**
-     * @param ApplicationRepositoryInterface $repository
-     */
-    public function __construct(ApplicationRepositoryInterface $repository)
+    public function __construct(PackageRepositoryInterface $repository, ApplicationRepositoryInterface $applicationRepository)
     {
-        $this->repository = $repository;
+        parent::__construct($repository);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::newEntityInstance()
+     */
+    protected function newEntityInstance(array $data)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::post()
+     */
+    protected function post()
+    {
+        // TODO Auto-generated method stub
+        return parent::post();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::put()
+     */
+    protected function put()
+    {
+        // TODO Auto-generated method stub
+        return parent::put();
     }
 
     /**

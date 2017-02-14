@@ -24,11 +24,12 @@ namespace Rampage\Nexus\Master\Action;
 
 use Rampage\Nexus\Repository\ApplicationRepositoryInterface;
 use Rampage\Nexus\Entities\Application;
+use Rampage\Nexus\Exception\Http\BadRequestException;
 
 /**
  * Implements the packages endpoint
  */
-class ApplicationsAction extends AbstractRestApi
+class ApplicationsAction extends AbstractRestAction
 {
     /**
      * {@inheritDoc}
@@ -36,7 +37,17 @@ class ApplicationsAction extends AbstractRestApi
      */
     public function __construct(ApplicationRepositoryInterface $repository)
     {
-        parent::__construct($repository, new Application());
+        parent::__construct($repository);
+    }
+
+    /**
+     * Applications cannot be created directly, but indirectly by adding a package
+     *
+     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::newEntityInstance()
+     */
+    protected function newEntityInstance(array $data)
+    {
+        throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
     }
 
     /**

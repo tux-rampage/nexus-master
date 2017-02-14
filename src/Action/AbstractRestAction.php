@@ -24,10 +24,10 @@ namespace Rampage\Nexus\Master\Action;
 
 use Rampage\Nexus\Entities\Api\ArrayExchangeInterface;
 use Rampage\Nexus\Entities\Api\ArrayExportableInterface;
-use Rampage\Nexus\Exception\UnexpectedValueException;
-use Rampage\Nexus\Exception\LogicException;
 use Rampage\Nexus\Repository\PrototypeProviderInterface;
 use Rampage\Nexus\Repository\RepositoryInterface;
+
+use Rampage\Nexus\Exception\UnexpectedValueException;
 use Rampage\Nexus\Exception\Http\BadRequestException;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +37,6 @@ use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Stdlib\ArraySerializableInterface;
 use Zend\Stratigility\MiddlewareInterface;
-use Zend\InputFilter\InputFilterInterface;
 
 use ArrayObject;
 
@@ -81,6 +80,30 @@ abstract class AbstractRestAction implements MiddlewareInterface
     }
 
     /**
+     * @param int $id
+     * @param array $data
+     */
+    protected function prepareUpdateData($id, array $data)
+    {
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function prepareCreateData(array $data)
+    {
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @return object
+     */
+    abstract protected function newEntityInstance(array $data);
+
+    /**
      * Creates an entity from the given post data
      *
      * @param array $data
@@ -89,16 +112,7 @@ abstract class AbstractRestAction implements MiddlewareInterface
     protected function createEntity(array $data)
     {
         /** @var ArrayExchangeInterface $object */
-        if ($this->repository instanceof PrototypeProviderInterface) {
-            $object = $this->repository->getPrototypeByData($data);
-        } else {
-            if (!$this->prototype) {
-                throw new LogicException('Cannot create a new entity without a prototype');
-            }
-
-            $object = clone $this->prototype;
-        }
-
+        $object = $this->newEntityInstance($data);
         $object->exchangeArray($data);
         return $object;
     }
@@ -135,20 +149,11 @@ abstract class AbstractRestAction implements MiddlewareInterface
      */
     public function create(array $data)
     {
-        if (!method_exists($this->repository, 'save')) {
+        if (!$this->canSave()) {
             return $this->response->withStatus(BadRequestException::NOT_ALLOWED);
         }
 
-        $filter = $this->getCreateInputFilter();
-
-        if (!$filter->setData($data)->isValid()) {
-            return new JsonResponse([
-                'invalid' => true,
-                'messages' => $filter->getMessages()
-            ], BadRequestException::UNPROCESSABLE);
-        }
-
-        $object = $this->createEntity($filter->getValues());
+        $object = $this->createEntity($this->prepareCreateData($data));
         $this->repository->save($object);
 
         return $object;
@@ -164,7 +169,7 @@ abstract class AbstractRestAction implements MiddlewareInterface
      */
     public function update($id, array $data)
     {
-        if (!method_exists($this->repository, 'save')) {
+        if (!$this->canSave()) {
             return $this->response->withStatus(BadRequestException::NOT_ALLOWED);
         }
 
@@ -174,16 +179,8 @@ abstract class AbstractRestAction implements MiddlewareInterface
             return null;
         }
 
-        $filter = $this->getUpdateInputFilter();
-
-        if (!$filter->setData($data)->isValid()) {
-            return new JsonResponse([
-                'invalid' => true,
-                'messages' => $filter->getMessages()
-            ], BadRequestException::UNPROCESSABLE);
-        }
-
-        $this->updateEntity($filter->getValues(), $object);
+        $data = $this->prepareUpdateData($id, $data);
+        $this->updateEntity($data, $object);
         $this->repository->save($object);
 
         return $object;
@@ -265,27 +262,11 @@ abstract class AbstractRestAction implements MiddlewareInterface
     }
 
     /**
-     * @return InputFilterInterface
-     */
-    private function getCreateInputFilter()
-    {
-        return new RestApi\NoopInputFilter();
-    }
-
-    /**
-     * @return InputFilterInterface
-     */
-    private function getUpdateInputFilter()
-    {
-        return new RestApi\NoopInputFilter();
-    }
-
-    /**
      * Check if deletion is possible
      *
      * @return
      */
-    private function canDelete()
+    protected function canDelete()
     {
         return (method_exists($this->repository, 'remove'));
     }
@@ -295,9 +276,41 @@ abstract class AbstractRestAction implements MiddlewareInterface
      *
      * @return bool
      */
-    private function canSave()
+    protected function canSave()
     {
         return !method_exists($this->repository, 'save');
+    }
+
+    /**
+     * @throws BadRequestException
+     * @return \Rampage\Nexus\Entities\Api\ArrayExchangeInterface|object|\Rampage\Nexus\Master\Action\NULL
+     */
+    protected function put()
+    {
+        if (!$this->canSave()) {
+            throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
+        }
+
+        // Break intentionally omitted
+
+        $id = $this->request->getAttribute($this->identifierAttribute);
+        $data = $this->ensureParsedBody($this->request);
+
+        return $this->update($id, $data);
+    }
+
+    /**
+     * @throws BadRequestException
+     * @return \Rampage\Nexus\Entities\Api\ArrayExchangeInterface
+     */
+    protected function post()
+    {
+        if (!$this->canSave()) {
+            throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
+        }
+
+        $data = $this->ensureParsedBody($this->request);
+        return $this->create($data);
     }
 
     /**
@@ -321,25 +334,7 @@ abstract class AbstractRestAction implements MiddlewareInterface
                 } else {
                     $result = $this->get($id);
                 }
-                break;
 
-            // POST/PUT preconditions
-            case 'put': // Break intentionally omitted
-            case 'post':
-                if (!$this->canSave()) {
-                    throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
-                }
-                // Break intentionally omitted
-
-            case 'put':
-                $id = $request->getAttribute($this->identifierAttribute);
-                $data = $this->ensureParsedBody($request);
-                $result = $this->update($id, $data);
-                break;
-
-            case 'post':
-                $data = $this->ensureParsedBody($request);
-                $result = $this->create($data);
                 break;
 
             case 'delete':
@@ -356,6 +351,11 @@ abstract class AbstractRestAction implements MiddlewareInterface
                 }
 
                 break;
+
+            default:
+                if (method_exists($this, $method)) {
+                    $result = $this->$method();
+                }
         }
 
         if ($result === null) {
@@ -366,15 +366,18 @@ abstract class AbstractRestAction implements MiddlewareInterface
             return new TextResponse('Not found', 404, $response->getHeaders());
         }
 
+        // There is a response instance - return
         if ($result instanceof ResponseInterface) {
             return $result;
-        } else if ($result instanceof ArrayExportableInterface) {
+        }
+
+        if ($result instanceof ArrayExportableInterface) {
             $result = $result->toArray();
         } else if ($result instanceof ArraySerializableInterface) {
             $result = $result->getArrayCopy();
         }
 
-        if (is_array($result) || ($result instanceof ArrayObject)) {
+        if (is_array($result) || ($result instanceof ArrayObject) || ($result instanceof \JsonSerializable)) {
             return new JsonResponse($result, 200, $response->getHeaders());
         }
 

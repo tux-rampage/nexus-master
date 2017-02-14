@@ -23,15 +23,38 @@
 namespace Rampage\Nexus\Master\Action;
 
 use Rampage\Nexus\Repository\NodeRepositoryInterface;
+use Rampage\Nexus\Entities\Node;
+use Rampage\Nexus\Exception\Http\BadRequestException;
+use Rampage\Nexus\Master\Deployment\NodeStrategyProvider;
+use Rampage\Nexus\Exception\RuntimeException;
 
-class NodesAction extends AbstractRestApi
+class NodesAction extends AbstractRestAction
 {
+    private $nodeStrategyProvider;
+
     /**
      * {@inheritDoc}
      * @see \Rampage\Nexus\Action\AbstractRestApi::__construct()
      */
-    public function __construct(NodeRepositoryInterface $repository)
+    public function __construct(NodeRepositoryInterface $repository, NodeStrategyProvider $nodeStrategyProvider)
     {
         parent::__construct($repository);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::newEntityInstance()
+     */
+    protected function newEntityInstance(array $data)
+    {
+        try {
+            /** @var $node \Rampage\Nexus\Entities\Node */
+            $node = $this->repository->getPrototypeByData($data);
+            $node->getStrategy();
+        } catch (RuntimeException $e) {
+            throw new BadRequestException($e->getMessage(), BadRequestException::UNPROCESSABLE, $e);
+        }
+
+        return $node;
     }
 }
