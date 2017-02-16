@@ -25,6 +25,7 @@ namespace Rampage\Nexus\Master;
 use League\OAuth2\Server\Middleware\ResourceServerMiddleware;
 use Zend\Expressive\Container\ApplicationFactory;
 use Zend\Expressive\Helper\UrlHelperMiddleware;
+use Rampage\Nexus\Middleware\RestfulServiceMiddleware;
 
 /**
  * Defines the routing config
@@ -64,22 +65,22 @@ return [
             'applications' => [
                 'name' => 'applications',
                 'path' => '/applications[/{id}]',
-                'middleware' => Action\ApplicationsAction::class,
-                'allow_methods' => [ 'GET' ],
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\ApplicationsService::class),
+                'allow_methods' => [ 'GET', 'PUT', 'OPTIONS' ],
             ],
 
-            'applications/packages' => [
-                'name' => 'applications/packages',
-                'path' => '/applications/{appId}/packages[/{id}]',
-                'middleware' => Action\ApplicationPackagesAction::class,
-                'allow_methods' => [ 'GET' ],
+            'packages' => [
+                'name' => 'packages',
+                'path' => '/packages[/{id}]',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\PackagesService::class),
+                'allow_methods' => [ 'GET', 'PUT', 'POST', 'DELETE', 'OPTIONS' ],
             ],
 
             'applications/icon' => [
                 'name' => 'noauth:applications/icon',
                 'path' => '/applications/{id}/icon',
-                'middleware' => Action\ApplicationIconAction::class,
-                'allow_methods' => [ 'GET' ],
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\ApplicationIconService::class),
+                'allow_methods' => [ 'GET', 'OPTIONS' ],
             ],
 
         ],

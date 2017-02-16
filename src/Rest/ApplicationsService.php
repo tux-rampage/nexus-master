@@ -20,42 +20,36 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Master\Action;
+namespace Rampage\Nexus\Master\Rest;
 
 use Rampage\Nexus\Repository\ApplicationRepositoryInterface;
+use Rampage\Nexus\Repository\RestService\GetableTrait;
+use Rampage\Nexus\Repository\RestService\PutableTrait;
 use Rampage\Nexus\Entities\Application;
-use Rampage\Nexus\Exception\Http\BadRequestException;
 
 /**
  * Implements the packages endpoint
  */
-class ApplicationsAction extends AbstractRestAction
+class ApplicationsService
 {
+    use GetableTrait;
+    use PutableTrait;
+
     /**
      * {@inheritDoc}
      * @see \Rampage\Nexus\Action\AbstractRestApi::__construct()
      */
     public function __construct(ApplicationRepositoryInterface $repository)
     {
-        parent::__construct($repository);
+        $this->repository = $repository;
     }
 
     /**
-     * Applications cannot be created directly, but indirectly by adding a package
-     *
-     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::newEntityInstance()
+     * @param Application $entity
+     * @param array $data
      */
-    protected function newEntityInstance(array $data)
+    private function updateEntity(Application $entity, array $data)
     {
-        throw new BadRequestException('Method not allowed', BadRequestException::NOT_ALLOWED);
-    }
-
-    /**
-     * @param Application $item
-     * @return \Rampage\Nexus\Entities\Api\ArrayExportableInterface
-     */
-    protected function exportCollectionItemToArray($item)
-    {
-        return $item->toArray(false);
+        $entity->exchangeArray($data);
     }
 }
