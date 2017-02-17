@@ -59,7 +59,7 @@ return [
             'nodes' => [
                 'name' => 'nodes',
                 'path' => '/nodes[/{id}]',
-                'middleware' => Action\NodesAction::class,
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\NodesService::class),
             ],
 
             'applications' => [

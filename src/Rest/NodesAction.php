@@ -20,32 +20,42 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Master\Action;
+namespace Rampage\Nexus\Master\Rest;
+
+use Rampage\Nexus\Entities\Node;
 
 use Rampage\Nexus\Repository\NodeRepositoryInterface;
-use Rampage\Nexus\Entities\Node;
+use Rampage\Nexus\Repository\RestService\GetableTrait;
+use Rampage\Nexus\Repository\RestService\PutableTrait;
+use Rampage\Nexus\Repository\RestService\PostableTrait;
+
 use Rampage\Nexus\Exception\Http\BadRequestException;
-use Rampage\Nexus\Master\Deployment\NodeStrategyProvider;
 use Rampage\Nexus\Exception\RuntimeException;
 
-class NodesAction extends AbstractRestAction
+
+/**
+ * Implements the rest service contract for Nodes
+ */
+class NodesService
 {
-    private $nodeStrategyProvider;
+    use GetableTrait;
+    use PutableTrait;
+    use PostableTrait;
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Action\AbstractRestApi::__construct()
+     * @param NodeRepositoryInterface $repository
      */
-    public function __construct(NodeRepositoryInterface $repository, NodeStrategyProvider $nodeStrategyProvider)
+    public function __construct(NodeRepositoryInterface $repository)
     {
-        parent::__construct($repository);
+        $this->repository = $repository;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Master\Action\AbstractRestAction::newEntityInstance()
+     * @param array $data
+     * @throws BadRequestException
+     * @return \Rampage\Nexus\Entities\Node
      */
-    protected function newEntityInstance(array $data)
+    private function createNewEntity(array $data)
     {
         try {
             /** @var $node \Rampage\Nexus\Entities\Node */
@@ -55,6 +65,7 @@ class NodesAction extends AbstractRestAction
             throw new BadRequestException($e->getMessage(), BadRequestException::UNPROCESSABLE, $e);
         }
 
+        $node->exchangeArray($data);
         return $node;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016 Axel Helmert
+ * Copyright (c) 2017 Axel Helmert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Axel Helmert
- * @copyright Copyright (c) 2016 Axel Helmert
+ * @copyright Copyright (c) 2017 Axel Helmert
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
 namespace Rampage\Nexus\Master\Action\NodeApi;
 
 use Rampage\Nexus\Repository\NodeRepositoryInterface;
+use Rampage\Nexus\Master\Rest\Node\NodeContextTrait;
 use Rampage\Nexus\Archive\ArchiveLoaderInterface;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-use Zend\Stratigility\MiddlewareInterface;
 use Zend\Diactoros\Stream;
 
 
 /**
- * Package middleware
+ * Implements the package service contract
  */
-class PackageAction implements MiddlewareInterface
+class PackageService
 {
-    /**
-     * @var NodeRepositoryInterface
-     */
-    protected $repository;
+    use NodeContextTrait;
 
     /**
      * @var ArchiveLoaderInterface
@@ -50,34 +46,35 @@ class PackageAction implements MiddlewareInterface
     /**
      * @param NodeRepositoryInterface $repository
      */
-    public function __construct(NodeRepositoryInterface $repository, ArchiveLoaderInterface $archiveLoader)
+    public function __construct(ArchiveLoaderInterface $archiveLoader)
     {
-        $this->repository = $repository;
         $this->archiveLoader = $archiveLoader;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
+     * Returns a package stream
+     *
+     * @param ServerRequestInterface $request
+     * @return \Psr\Http\Message\StreamInterface|null
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function get(ServerRequestInterface $request)
     {
-        $node = $request->getAttribute('node');
+        $node = $this->ensureNodeContext($request);
         $applicationId = $request->getAttribute('applicationId');
 
-        if (!$applicationId || !$node || !$node->isAttached()) {
-            return $next($request, $response);
+        if (!$applicationId) {
+            return null;
         }
 
-        $application = $node->getDeployTarget()->findApplication($applicationId);
+        $application = $node->getDeployTarget()->findApplicationInstance($applicationId);
         $package = $application? $application->getPackage() : null;
         $archive = $package->getArchive();
 
         if (!$archive) {
-            return $next($request, $response);
+            return null;
         }
 
         $file = $this->archiveLoader->ensureLocalArchiveFile($archive);
-        return $response->withBody(new Stream($file->getPathname()));
+        return new Stream($file->getPathname());
     }
 }

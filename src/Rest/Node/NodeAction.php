@@ -20,27 +20,27 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Master\Action\NodeApi;
+namespace Rampage\Nexus\Master\Rest\Node;
 
 use Rampage\Nexus\Entities\Node;
 use Rampage\Nexus\Repository\NodeRepositoryInterface;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Stratigility\MiddlewareInterface;
 use Zend\Stdlib\Parameters;
 
+
 /**
- * Implements the primary entry point for the node
+ * Implements the primary node service contract
  *
- * This middleware will perform node updates on put requests and
+ * This service will perform node updates on put requests and
  * Return the deploy target information for get requests
  */
-class NodeAction implements MiddlewareInterface
+class NodeService
 {
+    use NodeContextTrait;
+
     /**
      * @var NodeRepositoryInterface
      */
@@ -65,27 +65,23 @@ class NodeAction implements MiddlewareInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
+     * @param ServerRequestInterface $request
+     * @return \Rampage\Nexus\Entities\Node
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function get(ServerRequestInterface $request)
     {
-        $method = strtolower($request->getMethod());
-        $node = $request->getAttribute('node');
+        return $this->ensureNodeContext($request);
+    }
 
-        if (!$node) {
-            return $next($request, $response);
-        }
+    /**
+     * @param ServerRequestInterface $request
+     * @return \Zend\Diactoros\Response\EmptyResponse
+     */
+    public function put(ServerRequestInterface $request)
+    {
+        $node = $this->ensureNodeContext($request);
 
-        switch ($method) {
-            case 'get':
-                return new JsonResponse($node->toArray());
-
-            case 'put':
-                $this->updateNodeState($node, $this->decodeJsonRequestBody($request));
-                return new EmptyResponse();
-        }
-
-        return $next($request, $response);
+        $this->updateNodeState($node, $this->decodeJsonRequestBody($request));
+        return new EmptyResponse();
     }
 }
