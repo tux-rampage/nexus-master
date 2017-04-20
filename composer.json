@@ -1,24 +1,30 @@
 {
     "name" : "tuxrampage/nexus-master",
     "description" : "Adds ansible management to Rampage-Nexus",
-    "repositories" : [
-        { "type" : "git", "url" : "git@github.com:tux-rampage/nexus-mongo-odm.git" },
-        { "type" : "git", "url" : "git@github.com:tux-rampage/nexus-common.git" },
-        { "type" : "git", "url" : "git@github.com:tux-rampage/zend-di.git" }
+    "repositories" : [{
+            "type" : "git",
+            "url" : "git@github.com:tux-rampage/nexus-mongo-odm.git"
+        }, {
+            "type" : "git",
+            "url" : "git@github.com:tux-rampage/nexus-common.git"
+        }, {
+            "type" : "git",
+            "url" : "git@github.com:tux-rampage/zend-di.git"
+        }
     ],
     "require" : {
         "php" : "^5.6 || ^7.0",
         "tuxrampage/nexus-common" : "^1.0",
-        "tuxrampage/nexus-persistence": "^1.0.0",
-        "zendframework/zend-expressive-zendviewrenderer": "^1.1",
-        "zendframework/zend-inputfilter": "^2.7",
-        "league/oauth2-server" : "^5.1.0"
+        "tuxrampage/nexus-persistence" : "^1.0.0",
+        "zendframework/zend-expressive-zendviewrenderer" : "^1.1",
+        "zendframework/zend-inputfilter" : "^2.7",
+        "league/oauth2-server" : "^5.1.0",
+        "zendframework/zend-http" : "^2.6"
     },
     "require-dev" : {
         "tuxrampage/nexus-common" : "dev-master as 1.0.x-dev",
         "tuxrampage/nexus-mongo-odm" : "dev-master as 1.0.x-dev",
         "zendframework/zend-di" : "dev-zf3 as 3.0.0",
-
         "phpunit/phpunit" : "^4.8",
         "squizlabs/php_codesniffer" : "^2.3",
         "filp/whoops" : "^1.1 || ^2.0"
@@ -44,9 +50,9 @@
         }
     ],
     "homepage" : "https://github.com/tux-rampage/rampage-nexus",
-    "extra": {
-        "banch-alias": {
-            "dev-master": "1.0.x-dev"
+    "extra" : {
+        "banch-alias" : {
+            "dev-master" : "1.0.x-dev"
         }
     }
 }

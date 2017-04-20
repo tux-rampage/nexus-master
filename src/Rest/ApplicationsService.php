@@ -22,10 +22,12 @@
 
 namespace Rampage\Nexus\Master\Rest;
 
+use Rampage\Nexus\Entities\Application;
+
 use Rampage\Nexus\Repository\ApplicationRepositoryInterface;
+use Rampage\Nexus\Repository\PersistenceManagerInterface;
 use Rampage\Nexus\Repository\RestService\GetableTrait;
 use Rampage\Nexus\Repository\RestService\PutableTrait;
-use Rampage\Nexus\Entities\Application;
 
 /**
  * Implements the packages endpoint
@@ -39,9 +41,10 @@ class ApplicationsService
      * {@inheritDoc}
      * @see \Rampage\Nexus\Action\AbstractRestApi::__construct()
      */
-    public function __construct(ApplicationRepositoryInterface $repository)
+    public function __construct(ApplicationRepositoryInterface $repository, PersistenceManagerInterface $persistenceManager)
     {
         $this->repository = $repository;
+        $this->persistenceManager = $persistenceManager;
     }
 
     /**

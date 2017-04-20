@@ -31,6 +31,7 @@ use Rampage\Nexus\Repository\RestService\PostableTrait;
 
 use Rampage\Nexus\Exception\Http\BadRequestException;
 use Rampage\Nexus\Exception\RuntimeException;
+use Rampage\Nexus\Repository\PersistenceManagerInterface;
 
 
 /**
@@ -45,9 +46,10 @@ class NodesService
     /**
      * @param NodeRepositoryInterface $repository
      */
-    public function __construct(NodeRepositoryInterface $repository)
+    public function __construct(NodeRepositoryInterface $repository, PersistenceManagerInterface $peristenceManager)
     {
         $this->repository = $repository;
+        $this->persistenceManager = $peristenceManager;
     }
 
     /**
