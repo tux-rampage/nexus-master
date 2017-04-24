@@ -155,7 +155,11 @@ class Rampage implements NodeStrategyInterface
         $state = $this->entity->getState();
 
         if (!$application) {
-            return ($state == self::STATE_READY);
+            return !in_array($state, [
+                self::STATE_BUILDING,
+                self::STATE_UNREACHABLE,
+                self::STATE_SECURITY_VIOLATED
+            ]);
         }
 
         if ($this->entity->getApplicationState($application) == self::STATE_READY) {
@@ -274,6 +278,7 @@ class Rampage implements NodeStrategyInterface
      */
     public function attach(DeployTarget $deployTarget)
     {
+        $this->entity->setState(self::STATE_UNINITIALIZED);
     }
 
     /**
@@ -297,5 +302,7 @@ class Rampage implements NodeStrategyInterface
      */
     public function detach()
     {
+        $this->entity->setState(self::STATE_UNINITIALIZED);
+        $this->request('post', 'detach', '{}');
     }
 }

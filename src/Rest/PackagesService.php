@@ -55,6 +55,11 @@ class PackagesService
     private $archiveLoader;
 
     /**
+     * @var array
+     */
+    private $mimeToArchiveTypeMap = [];
+
+    /**
      * @param PackageRepositoryInterface $repository
      */
     public function __construct(PackageRepositoryInterface $repository, PersistenceManagerInterface $persistenceManager)
@@ -114,14 +119,18 @@ class PackagesService
      */
     private function loadPackage(ServerRequestInterface $request)
     {
-        // TODO: map Phar type by mimeType
         $mimeType = $this->getMimeType($request);
         $tempFile = $this->buildFileName();
+        $archiveType = \Phar::ZIP;
+
+        if (isset($this->mimeToArchiveTypeMap[$mimeType])) {
+            $archiveType = $this->mimeToArchiveTypeMap[$mimeType];
+        }
 
         $this->savePackageFile($request, $tempFile);
 
         try {
-            $archive = new \PharData($tempFile, null, null, \Phar::ZIP);
+            $archive = new \PharData($tempFile, null, null, $archiveType);
             $package = $this->archiveLoader->getPackage($archive);
         } catch (\Exception $e) {
             unlink($tempFile);

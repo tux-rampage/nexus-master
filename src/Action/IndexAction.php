@@ -23,7 +23,6 @@
 namespace Rampage\Nexus\Master\Action;
 
 use Rampage\Nexus\Version;
-use Rampage\Nexus\FeatureProvider;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -38,19 +37,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class IndexAction implements MiddlewareInterface
 {
     /**
-     * @var FeatureProvider
-     */
-    private $features;
-
-    /**
-     * @param FeatureProvider $config
-     */
-    public function __construct(FeatureProvider $features)
-    {
-        $this->features = $features;
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
      */
@@ -59,7 +45,6 @@ class IndexAction implements MiddlewareInterface
         return new JsonResponse([
             'name' => 'Rampage Nexus Deployment',
             'version' => Version::getVersion(),
-            'features' => $this->features->toArray(),
         ]);
     }
 }
