@@ -20,50 +20,46 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Master\Rest;
-
-use Rampage\Nexus\Repository\RestService\GetableTrait;
-use Rampage\Nexus\Repository\RestService\PutableTrait;
-use Rampage\Nexus\Repository\RestService\PostableTrait;
-use Rampage\Nexus\Repository\RestService\DeletableTrait;
-use Rampage\Nexus\Repository\DeployTargetRepositoryInterface;
-use Rampage\Nexus\Repository\PersistenceManagerInterface;
+namespace Rampage\Nexus\Master\Rest\DeployTarget;
 
 use Rampage\Nexus\Entities\DeployTarget;
+use Rampage\Nexus\Master\Rest\DeployTargetService;
+use Rampage\Nexus\Repository\PersistenceManagerInterface;
+
 
 /**
- * Implements the rest service for deploy targets
- *
- * @method DeployTarget get($requestOrId)
+ * Abstract deploy target context service
  */
-class DeployTargetService
+abstract class AbstractService
 {
-    use GetableTrait;
-    use PutableTrait;
-    use PostableTrait;
-    use DeletableTrait;
-
     /**
-     * @var DeployTargetRepositoryInterface
+     * @var PersistenceManagerInterface
      */
-    private $repository;
+    protected $persistenceManager;
 
     /**
-     * @param DeployTargetRepositoryInterface $repository
+     * @var DeployTargetService
+     */
+    protected $context;
+
+    /**
+     * @param DeployTargetService $context
      * @param PersistenceManagerInterface $persistenceManager
      */
-    public function __construct(DeployTargetRepositoryInterface $repository, PersistenceManagerInterface $persistenceManager)
+    public function __construct(DeployTargetService $context, PersistenceManagerInterface $persistenceManager)
     {
-        $this->repository = $repository;
+        $this->context = $context;
         $this->persistenceManager = $persistenceManager;
     }
 
     /**
-     * @param array $data
-     * @return \Rampage\Nexus\Entities\DeployTarget
+     * Saves the given entity and performs a flush
+     *
+     * @param object $entity
      */
-    private function createNewEntity(array $data)
+    protected function save($entity)
     {
-        return new DeployTarget();
+        $this->persistenceManager->persist($entity);
+        $this->persistenceManager->flush();
     }
 }

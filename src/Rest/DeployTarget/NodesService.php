@@ -33,27 +33,18 @@ use Rampage\Nexus\Deployment\NodeStrategyProviderInterface;
 use Rampage\Nexus\Exception\Http\BadRequestException;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Rampage\Nexus\Exception\RuntimeException;
 
 
 /**
  * Implements the node rest service
  */
-class NodesService
+class NodesService extends AbstractService
 {
-    /**
-     * @var DeployTargetService
-     */
-    private $context;
-
     /**
      * @var NodeRepositoryInterface
      */
     private $repository;
-
-    /**
-     * @var PersistenceManagerInterface
-     */
-    private $persistenceManager;
 
     /**
      * @var NodeStrategyProviderInterface
@@ -71,20 +62,10 @@ class NodesService
         PersistenceManagerInterface $persistenceManager,
         NodeStrategyProviderInterface $strategyProvider)
     {
-        $this->context = $context;
+        parent::__construct($context, $persistenceManager);
+
         $this->repository = $repository;
-        $this->persistenceManager = $persistenceManager;
         $this->strategyProvider = $strategyProvider;
-    }
-
-
-    /**
-     * @param Node $node
-     */
-    private function save(Node $node)
-    {
-        $this->persistenceManager->persist($node);
-        $this->persistenceManager->flush($node);
     }
 
     /**
@@ -165,7 +146,11 @@ class NodesService
         $this->save($node);
 
         if ($node->canSync()) {
-            $node->rebuild();
+            try {
+                $node->rebuild();
+            } catch (RuntimeException $e) {
+            }
+
             $this->save($node);
         }
 

@@ -153,7 +153,7 @@ class PackagesService
             $entity = $this->repository->findOne($package->getId());
 
             if (!$entity) {
-                throw new BadRequestException('Package not found', 404);
+                $entity = new ApplicationPackage($package);
             }
 
             $package = null;
