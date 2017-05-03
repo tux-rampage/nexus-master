@@ -75,7 +75,7 @@ class NodesService extends AbstractService
     public function get(ServerRequestInterface $request)
     {
         /** @var DeployTarget $target */
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $nodeId = $request->getAttribute('nodeId');
 
         if (!$nodeId) {
@@ -98,7 +98,7 @@ class NodesService extends AbstractService
     public function put(ServerRequestInterface $request)
     {
         /** @var DeployTarget $target */
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $data = $request->getParsedBody();
 
         if (!$target || !isset($data['rebuildIds']) || !is_array($data['rebuildIds'])) {
@@ -133,7 +133,7 @@ class NodesService extends AbstractService
         }
 
         /** @var Node $node */
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $node = $this->repository->findOne($data['id']);
 
         if (!$target || !$node) {

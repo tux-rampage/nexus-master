@@ -35,7 +35,7 @@ class SyncService extends AbstractService
      */
     public function get(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $params = new Parameters($request->getQueryParams());
 
         if ($target) {
@@ -85,7 +85,7 @@ class SyncService extends AbstractService
      */
     public function post(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $params = new Parameters($request->getParsedBody());
 
         if (!$target) {

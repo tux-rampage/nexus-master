@@ -32,6 +32,7 @@ use Rampage\Nexus\Repository\ApplicationRepositoryInterface;
 use Rampage\Nexus\Master\Rest\DeployTargetService;
 use Rampage\Nexus\Repository\PersistenceManagerInterface;
 use Zend\Stdlib\Parameters;
+use Rampage\Nexus\Exception\Http\BadRequestException;
 
 
 /**
@@ -73,7 +74,7 @@ class ApplicationsService extends AbstractService
      */
     public function get(ServerRequestInterface $request, DeployTarget $target = null, $allowList = true)
     {
-        $target = $target?: $this->context->get($request);
+        $target = $target?: $this->getDeployTarget($request);
         $id = $request->getAttribute('applicationId');
 
         if (!$target || (!$allowList && !$id)) {
@@ -102,7 +103,7 @@ class ApplicationsService extends AbstractService
      */
     public function delete(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $app = $this->get($request, $target, false);
 
         if (!$app) {
@@ -116,12 +117,14 @@ class ApplicationsService extends AbstractService
     }
 
     /**
+     * Update an application instance
+     *
      * @param ServerRequestInterface $request
      * @return NULL
      */
     public function put(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $app = $this->get($request, $target, false);
 
         if (!$app) {
@@ -144,11 +147,15 @@ class ApplicationsService extends AbstractService
     {
         $data = $request->getParsedBody();
         $params = new Parameters($data);
-        $target = $this->context->get($request);
-        $package = $this->packageRepository->findOne($params->get('request'));
+        $target = $this->getDeployTarget($request);
+        $package = $this->packageRepository->findOne($params->get('package'));
 
         if (!$target || !$package) {
             return null;
+        }
+
+        if ($target->findApplicationInstance($params->get('id'))) {
+            throw new BadRequestException('Duplicate application instance id', BadRequestException::ENTITY_EXISTS);
         }
 
         $application = $this->applicationRepository->findOne($package->getName());

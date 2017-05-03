@@ -83,6 +83,36 @@ return [
                 'allow_methods' => [ 'GET', 'OPTIONS' ],
             ],
 
+            'deploytargets' => [
+                'name' => 'deploytargets',
+                'path' => '/targets[/{id}]',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\DeployTargetService::class),
+            ],
+
+            'deploytargets/nodes' => [
+                'name' => 'deploytargets/nodes',
+                'path' => '/targets/{id}/nodes[/{nodeId}]',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\DeployTarget\NodesService::class),
+            ],
+
+            'deploytargets/applications' => [
+                'name' => 'deploytargets/applications',
+                'path' => '/targets/{id}/apps[/{applicationId}]',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\DeployTarget\ApplicationsService::class),
+            ],
+
+            'deploytargets/vhosts' => [
+                'name' => 'deploytargets/vhosts',
+                'path' => '/targets/{id}/vhosts[/{vhostId}]',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\DeployTarget\VHostsService::class),
+            ],
+
+            'deploytargets/sync' => [
+                'name' => 'deploytargets/sync',
+                'path' => '/targets/{id}/sync',
+                'middleware' => RestfulServiceMiddleware::getMiddlewareServiceName(Rest\DeployTarget\SyncService::class),
+            ],
+
         ],
     ]
 ];

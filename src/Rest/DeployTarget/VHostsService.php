@@ -56,7 +56,7 @@ class VHostsService extends AbstractService
      */
     public function get(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $id = $request->getAttribute('vhostId');
 
         if (!$target) {
@@ -77,7 +77,7 @@ class VHostsService extends AbstractService
      */
     public function delete(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $vhost = $this->findVhost($request, $target);
 
         if (!$vhost) {
@@ -96,7 +96,7 @@ class VHostsService extends AbstractService
      */
     public function put(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
         $vhost = $this->findVhost($request, $target);
 
         if (!$vhost) {
@@ -118,7 +118,7 @@ class VHostsService extends AbstractService
      */
     public function post(ServerRequestInterface $request)
     {
-        $target = $this->context->get($request);
+        $target = $this->getDeployTarget($request);
 
         if (!$target) {
             return null;

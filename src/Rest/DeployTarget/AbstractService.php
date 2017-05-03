@@ -25,6 +25,7 @@ namespace Rampage\Nexus\Master\Rest\DeployTarget;
 use Rampage\Nexus\Entities\DeployTarget;
 use Rampage\Nexus\Master\Rest\DeployTargetService;
 use Rampage\Nexus\Repository\PersistenceManagerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 /**
@@ -50,6 +51,21 @@ abstract class AbstractService
     {
         $this->context = $context;
         $this->persistenceManager = $persistenceManager;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return \Rampage\Nexus\Entities\DeployTarget|null
+     */
+    protected function getDeployTarget(ServerRequestInterface $request)
+    {
+        $target = $this->context->get($request);
+
+        if (!$target instanceof DeployTarget) {
+            return null;
+        }
+
+        return $target;
     }
 
     /**
