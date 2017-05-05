@@ -36,7 +36,8 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Rampage\\Nexus\\Master\\" : "src/"
+            "Rampage\\Nexus\\Master\\" : "src/",
+            "Rampage\\Nexus\\Master\\CI\\Jenkins\\" : "features/ci.jenkins/src"
         }
     },
     "type" : "library",

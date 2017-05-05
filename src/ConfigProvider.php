@@ -32,6 +32,21 @@ use Rampage\Nexus\Config\PhpDirectoryProvider;
 class ConfigProvider extends AbstractConfigProvider
 {
     /**
+     * @var array
+     */
+    private $features = [];
+
+    /**
+     * @param array $features
+     */
+    public function __construct(array $features = null)
+    {
+        if ($features !== null) {
+            $this->features = array_values($features);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Rampage\Nexus\Config\AbstractConfigProvider::getGeneratedFilePath()
      */
@@ -46,9 +61,13 @@ class ConfigProvider extends AbstractConfigProvider
      */
     protected function getProviders()
     {
-        return [
+        $providers = $this->features;
+
+        array_splice($providers, 0, 0, [
             CommonConfigProvider::class,
             new PhpDirectoryProvider(__DIR__ . '/../config')
-        ];
+        ]);
+
+        return $providers;
     }
 }
