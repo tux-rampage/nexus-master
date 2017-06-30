@@ -3,13 +3,12 @@
     "description" : "Adds ansible management to Rampage-Nexus",
     "repositories" : [{
             "type" : "git",
-            "url" : "git@github.com:tux-rampage/nexus-mongo-odm.git"
+            "url" : "git@github.com:tux-rampage/nexus-common.git",
+            "name": "Nexus Common Lib (Git)"
         }, {
             "type" : "git",
-            "url" : "git@github.com:tux-rampage/nexus-common.git"
-        }, {
-            "type" : "git",
-            "url" : "git@github.com:tux-rampage/zend-di.git"
+            "url" : "git@github.com:tux-rampage/zend-di.git",
+            "name": "Zend DI 3.x"
         }
     ],
     "require" : {
@@ -19,11 +18,12 @@
         "zendframework/zend-expressive-zendviewrenderer" : "^1.1",
         "zendframework/zend-inputfilter" : "^2.7",
         "league/oauth2-server" : "^5.1.0",
-        "zendframework/zend-http" : "^2.6"
+        "zendframework/zend-http" : "^2.6",
+        "alcaeus/mongo-php-adapter" : "^1.1",
+        "doctrine/mongodb-odm" : "^1.1"
     },
     "require-dev" : {
         "tuxrampage/nexus-common" : "dev-master as 1.0.x-dev",
-        "tuxrampage/nexus-mongo-odm" : "dev-master as 1.0.x-dev",
         "zendframework/zend-di" : "dev-zf3 as 3.0.0",
         "phpunit/phpunit" : "^4.8",
         "squizlabs/php_codesniffer" : "^2.3",
@@ -37,7 +37,8 @@
     "autoload" : {
         "psr-4" : {
             "Rampage\\Nexus\\Master\\" : "src/",
-            "Rampage\\Nexus\\Master\\CI\\Jenkins\\" : "features/ci.jenkins/src"
+            "Rampage\\Nexus\\Master\\CI\\Jenkins\\" : "features/ci.jenkins/src",
+            "Rampage\\Nexus\\ODM\\" : "features/persistence.doctrine.mongodb/src"
         }
     },
     "type" : "library",

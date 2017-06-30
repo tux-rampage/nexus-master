@@ -26,6 +26,9 @@ use Rampage\Nexus\Config\AbstractConfigProvider;
 use Rampage\Nexus\Config\CommonConfigProvider;
 use Rampage\Nexus\Config\PhpDirectoryProvider;
 
+use Rampage\Nexus\ODM\ConfigProvider as ODMConfigProvider;
+
+
 /**
  * Config provider for deployment master apps
  */
@@ -34,7 +37,9 @@ class ConfigProvider extends AbstractConfigProvider
     /**
      * @var array
      */
-    private $features = [];
+    private $features = [
+        ODMConfigProvider::class
+    ];
 
     /**
      * @param array $features
