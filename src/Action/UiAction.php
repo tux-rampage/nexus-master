@@ -22,18 +22,13 @@
 
 namespace Rampage\Nexus\Master\Action;
 
-use Rampage\Nexus\Config\PropertyConfigInterface;
-use Rampage\Nexus\Exception\RuntimeException;
-
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-use GuzzleHttp\Cookie\SetCookie;
+use Interop\Http\Middleware\MiddlewareInterface;
+use Interop\Http\Middleware\DelegateInterface;
 
-use Zend\Stratigility\MiddlewareInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Expressive\Template\TemplateRendererInterface;
-use Rampage\Nexus\FeatureProvider;
 
 
 /**
@@ -47,48 +42,34 @@ class UiAction implements MiddlewareInterface
     private $renderer;
 
     /**
-     * @var PropertyConfigInterface
+     * @var string
      */
-    private $config;
-
-    /**
-     * @var FeatureProvider
-     */
-    private $features;
+    private $excludePaths = [
+        '/assets'
+    ];
 
     /**
      * @param TemplateRendererInterface $renderer
      */
-    public function __construct(TemplateRendererInterface $renderer, PropertyConfigInterface $config, FeatureProvider $features)
+    public function __construct(TemplateRendererInterface $renderer)
     {
         $this->renderer = $renderer;
-        $this->config = $config;
-        $this->features = $features;
     }
 
     /**
      * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
+     * @see \Interop\Http\Middleware\MiddlewareInterface::process()
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
-        $secret = $this->config->get('ui.secret');
+        $path = $request->getUri()->getPath();
 
-        if (!$secret) {
-            throw new RuntimeException('Missing UI client scret. Please specify ui.secret in your runtime configuration');
+        foreach ($this->excludePaths as $exclude) {
+            if (strpos($path, $exclude) === 0) {
+                return $delegate->process($request);
+            }
         }
 
-        $cookie = new SetCookie();
-        $cookie->setName('rnxUiClientSecret');
-        $cookie->setValue($secret);
-        $cookie->setPath('/');
-        $cookie->setHttpOnly(false);
-        $cookie->setDiscard(true);
-
-        $response = new HtmlResponse($this->renderer->render('ui::index', [
-            'features' => $this->features->toArray()
-        ]));
-
-        return $response->withAddedHeader('Set-Cookie', $cookie->__toString());
+        return new HtmlResponse($this->renderer->render('ui::index'));
     }
 }
